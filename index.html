@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中正國小六年級：全科期中考總複習模擬試卷（iPad 觸控筆草稿版）</title>
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --accent-color: #3498db;
+            --bg-color: #0f3460;
+            --card-bg: #16213e;
+            --text-color: #ffffff;
+        }
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 25px;
+            box-sizing: border-box;
+            border: 2px solid var(--accent-color);
+        }
+        h1 {
+            text-align: center;
+            color: #f39c12;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--accent-color);
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .form-group input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #34495e;
+            width: 60%;
+            margin-top: 8px;
+            background: #0f3460;
+            color: white;
+            text-align: center;
+        }
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .subject-btn {
+            background: #0f3460;
+            color: white;
+            border: 2px solid var(--accent-color);
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .subject-btn:hover {
+            background: var(--accent-color);
+        }
+        .exam-container {
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 580px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .exam-title {
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .exam-subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 8px;
+        }
+        .exam-question-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #bdc3c7;
+        }
+        .exam-question-title {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .exam-options label {
+            display: block;
+            margin-bottom: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        /* iPad 觸控筆畫布樣式 */
+        .scratchpad-box {
+            margin-top: 12px;
+            background: #fdfefe;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            padding: 8px;
+        }
+        .scratchpad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        .canvas-tools {
+            display: flex;
+            gap: 6px;
+        }
+        .tool-btn {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 3px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tool-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .scratchpad-canvas {
+            width: 100%;
+            height: 130px;
+            background: #ffffff;
+            border: 1px dashed #95a5a6;
+            border-radius: 4px;
+            touch-action: none; /* 防止 iPad 捲動干擾繪圖 */
+            cursor: crosshair;
+            display: block;
+            box-sizing: border-box;
+        }
+
+        .exam-feedback {
+            margin-top: 8px;
+            font-size: 13px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        .exam-correct { background: #d4edda; color: #155724; }
+        .exam-incorrect { background: #f8d7da; color: #721c24; }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #f1c40f;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 8px;
+        }
+        .start-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: background 0.3s;
+        }
+        .start-btn:hover { background: #219653; }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        .leaderboard-table th, .leaderboard-table td {
+            border: 1px solid #34495e;
+            padding: 6px;
+            text-align: center;
+        }
+        .leaderboard-table th {
+            background-color: #0f3460;
+            color: #f1c40f;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- 首頁選單 -->
+    <div id="home-screen">
+        <h1>📚 中正國小六年級：期中考總複習中心</h1>
+        <div class="subtitle">iPad 觸控筆專用草稿版模擬試卷</div>
+        
+        <div class="info-box">
+            <strong>複習指引：</strong>同學請輸入姓名並選擇科目。每題下方皆備有 **iPad 專屬觸控筆計算畫布**，可直接用 Apple Pencil 或手指書寫算式與筆記！
+        </div>
+        
+        <div class="form-group">
+            <label for="player-name">請輸入學生姓名：</label><br>
+            <input type="text" id="player-name" placeholder="例如：王小明" value="中正小同學">
+        </div>
+
+        <h3 style="color: #f1c40f; font-size: 15px; text-align: center; margin-top: 15px;">請選擇複習科目：</h3>
+        <div class="subject-grid">
+            <button class="subject-btn" onclick="startExam('chinese')">📖 國語文 (第 1～6 課)</button>
+            <button class="subject-btn" onclick="startExam('english')">🔤 英文 (Here We Go 9, U1-U2)</button>
+            <button class="subject-btn" onclick="startExam('social')">🌍 社會 (翰林第7冊, 第 1-2 單元)</button>
+            <button class="subject-btn" onclick="startExam('science')">🔬 自然 (翰林第7冊, 第 1-2 單元)</button>
+            <button class="subject-btn" style="grid-column: span 2; border-color: #e94560;" onclick="startExam('math')">📐 數學 (第 1～4 單元)</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h3 style="color: #f1c40f; font-size: 15px; text-align: center;">🏆 歷史學習排行榜</h3>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>科目</th>
+                        <th>姓名</th>
+                        <th>得分</th>
+                        <th>時間</th>
+                        <th>日期</th>
+                    </tr>
+                </thead>
+                <tbody id="home-leaderboard-body">
+                    <tr><td colspan="5">目前尚無記錄</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 考試進行畫面 -->
+    <div id="exam-screen" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="exam-student-tag" style="font-weight: bold; color: #f1c40f;">考生：</span>
+            <span id="exam-timer-indicator" style="font-weight: bold; color: #e74c3c;">⏱️ 考試時間：00:00</span>
+        </div>
+
+        <div class="exam-container" id="exam-paper-area"></div>
+
+        <div id="exam-submit-container">
+            <button class="start-btn" onclick="submitExam()">📤 寫完了，交卷看成績與詳解</button>
+        </div>
+        
+        <button class="subject-btn" style="font-size: 13px; padding: 8px 15px; margin-top: 12px; width: 100%; border-color: #95a5a6; color: #bdc3c7;" onclick="location.reload()">放棄考試並返回首頁</button>
+    </div>
+
+    <!-- 結算畫面 -->
+    <div id="result-screen" class="hidden">
+        <h1 style="color: #2ecc71;">🎉 測驗結算完成！</h1>
+        <div class="info-box" id="final-summary"></div>
+        
+        <h3 style="color: #f1c40f; text-align: center;">🏆 本次排行榜</h3>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>科目</th>
+                    <th>姓名</th>
+                    <th>得分</th>
+                    <th>時間</th>
+                    <th>日期</th>
+                </tr>
+            </thead>
+            <tbody id="final-leaderboard-body"></tbody>
+        </table>
+
+        <button class="start-btn" style="margin-top: 20px;" onclick="location.reload()">返回首頁</button>
+    </div>
+</div>
+
+<script>
+    const questionBanks = {
+        chinese: {
+            title: "康軒版六年級國語文（第 1～6 課）期中考模擬試卷",
+            questions: [
+                {
+                    unit: "第1課",
+                    question: "下列各組詞語的錯別字檢查，哪一個選項完全正確？",
+                    options: ["A. 「瞻」仰 / 「贍」養", "B. 震「憾」 / 「撼」動人心", "C. 懸「崖」 / 崖「岸」", "D. 以上皆正確"],
+                    answer: "D. 以上皆正確",
+                    explanation: "各組字形在詞義與部首上皆正確無誤。"
+                },
+                {
+                    unit: "第2課",
+                    question: "在課文中，作者常透過景物描寫來寄託情感，這種寫作手法稱為何？",
+                    options: ["借景抒情", "直抒胸臆", "夸張修辭", "譬喻法"],
+                    answer: "借景抒情",
+                    explanation: "借景抒情是將情感融入景物描寫之中，使文章更有感染力。"
+                },
+                {
+                    unit: "第3-4課",
+                    question: "下列句子中，哪一個選項使用了「轉化修辭」（擬人化）？",
+                    options: ["A. 陽光溫柔地撫摸著大地。", "B. 他的笑容像陽光一樣燦爛。", "C. 天空藍得像一匹上等的絲綢。", "D. 樹上的鳥兒成群結隊地飛過。"],
+                    answer: "A. 陽光溫柔地撫摸著大地。",
+                    explanation: "選項A賦予陽光「撫摸」的動作，屬於擬人化的轉化修辭。"
+                },
+                {
+                    unit: "第5-6課",
+                    question: "成語「愚公移山」比喻做事有恆心，不怕困難，下列哪一個成語意思與之最接近？",
+                    options: ["半途而廢", "滴水穿石", "緣木求魚", "守株待兔"],
+                    answer: "滴水穿石",
+                    explanation: "「滴水穿石」比喻只要有恆心毅力，微小力量也能達成艱鉅目標。"
+                }
+            ]
+        },
+        english: {
+            title: "翰林版 Here We Go 9（Unit 1～2）期中考模擬試卷",
+            questions: [
+                {
+                    unit: "Unit 1",
+                    question: "請選出正確的過去分詞(PP)變化：be 的過去分詞為何？",
+                    options: ["was", "were", "been", "being"],
+                    answer: "been",
+                    explanation: "be 動詞的三態為 be - was/were - been。"
+                },
+                {
+                    unit: "Unit 1",
+                    question: "Have you ever ______ to Japan? (你曾去過日本嗎？)",
+                    options: ["go", "went", "gone", "been"],
+                    answer: "been",
+                    explanation: "現在完成時態中，「去過某地且已回來」用 have/has been to。"
+                },
+                {
+                    unit: "Unit 2",
+                    question: "The girl ______ is singing on the stage is my sister. (請填入正確的關代)",
+                    options: ["who", "which", "whose", "where"],
+                    answer: "who",
+                    explanation: "先行詞為人（the girl），且在子句中作主詞，故使用關代 who。"
+                },
+                {
+                    unit: "Unit 2",
+                    question: "I like the book ______ you bought yesterday. (請填入適當的關代)",
+                    options: ["who", "which", "where", "when"],
+                    answer: "which",
+                    explanation: "先行詞為事物（the book），在子句中作受詞，故使用 which。"
+                }
+            ]
+        },
+        social: {
+            title: "翰林版六年級社會第 7 冊（第 1～2 單元）期中考模擬試卷",
+            questions: [
+                {
+                    unit: "第1單元",
+                    question: "臺灣因地理位置優越，自古以來便是東西方貿易與海運的重要樞紐。請問臺灣最早的大型國際貿易港口主要是在哪一個時期開始蓬勃發展？",
+                    options: ["荷西與明鄭時期", "日治時期", "戰後時期", "史前文化時期"],
+                    answer: "荷西與明鄭時期",
+                    explanation: "荷西與明鄭時期，臺灣逐漸被納入東亞海上貿易網，成為重要轉口港。"
+                },
+                {
+                    unit: "第1單元",
+                    question: "關於臺灣地形與氣候的敘述，下列何者正確？",
+                    options: ["A. 臺灣地勢起伏小，平原占了全國八成", "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺", "C. 臺灣四季如春，完全沒有冬季季風影響", "D. 雨量分布平均，沒有旱季"],
+                    answer: "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺",
+                    explanation: "中央山脈縱貫全島，成為東西部河川的分水嶺。"
+                },
+                {
+                    unit: "第2單元",
+                    question: "日治時期為了提升臺灣的經濟產值，推行了哪一項著名的農業經濟政策，使臺灣米糖產量大增？",
+                    options: ["工業化與南進政策", "農業改良與基礎建設（如興修水利）", "實施三七五減租", "推行士農工商平均發展"],
+                    answer: "農業改良與基礎建設（如興修水利）",
+                    explanation: "日治時期積極興修水利（如嘉南大圳）與推廣新品種，使米糖產量大增。"
+                },
+                {
+                    unit: "第2單元",
+                    question: "臺灣在戰後經濟發展過程中，曾在南部設立了哪一個園區，吸引外資設立加工出口區，帶動經濟起飛？",
+                    options: ["新竹科學園區", "高雄加工出口區", "臺中科學園區", "內湖科技園區"],
+                    answer: "高雄加工出口區",
+                    explanation: "我國於 1960 年代設立高雄加工出口區，為臺灣出口導向經濟奠定基礎。"
+                }
+            ]
+        },
+        science: {
+            title: "翰林版六年級自然與生活科技第 7 冊（第 1～2 單元）模擬試卷",
+            questions: [
+                {
+                    unit: "第1單元",
+                    question: "關於「槓桿原理」的敘述，下列哪一項是正確的？",
+                    options: ["A. 施力臂 × 施力 ＝ 抗力臂 × 抗力", "B. 抗力點一定在支點和施力點之間", "C. 施力點離支點越近越省力", "D. 剪刀一定是費力槓桿"],
+                    answer: "A. 施力臂 × 施力 ＝ 抗力臂 × 抗力",
+                    explanation: "槓桿平衡條件為：施力 × 施力臂 ＝ 抗力 × 抗力臂。"
+                },
+                {
+                    unit: "第1單元",
+                    question: "下列哪一項工具屬於「省力槓桿」（施力臂大於抗力臂）？",
+                    options: ["夾子（鑷子）", "釣魚竿", "開瓶器 / 獨輪車", "筷子"],
+                    answer: "開瓶器 / 獨輪車",
+                    explanation: "開瓶器的抗力在中間，施力臂大於抗力臂，因此省力。"
+                },
+                {
+                    unit: "第2單元",
+                    question: "關於天氣與氣溫變化的觀察，下列敘述何者正確？",
+                    options: ["A. 一天中氣溫最高通常出現在中午 12 點整", "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高", "C. 氣溫計可以直接放在大太陽底下曝晒來測量大氣溫度", "D. 陰天時氣溫一定比晴天高"],
+                    answer: "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高",
+                    explanation: "地表吸熱需要時間累積，因此午後約 2 時氣溫最高。"
+                },
+                {
+                    unit: "第2單元",
+                    question: "當天空中的水蒸氣在空中凝結成微小水滴或冰晶聚集漂浮時，我們稱之為什麼？",
+                    options: ["露", "霜", "雲", "霧"],
+                    answer: "雲",
+                    explanation: "雲是空氣中的水氣在高空遇冷凝結或凝華成的小水滴與冰晶聚集而成。"
+                }
+            ]
+        },
+        math: {
+            title: "翰林版六年級數學第 11 冊（第 1～4 單元）期中考模擬試卷",
+            questions: [
+                {
+                    unit: "第1單元",
+                    question: "下列各組數字中，完全都是質數的是哪一組？",
+                    options: ["2, 3, 11, 19", "1, 3, 5, 7", "2, 9, 13, 17", "2, 3, 15, 23"],
+                    answer: "2, 3, 11, 19",
+                    explanation: "質數只有 1 和自己本身兩個因數。數字 1 不是質數；9 和 15 是合數。"
+                },
+                {
+                    unit: "第2單元",
+                    question: "有 48 顆蘋果和 36 顆水梨，想要分裝到禮盒中，每盒裡的蘋果與水梨數量都要一樣多且全部分完。禮盒最多可以裝幾盒？",
+                    options: ["6 盒", "12 盒", "16 盒", "24 盒"],
+                    answer: "12 盒",
+                    explanation: "求 48 與 36 的最大公因數：HCF(48, 36) = 12。"
+                },
+                {
+                    unit: "第3單元",
+                    question: "計算：9/10 ÷ 3/20 = ?",
+                    options: ["4", "5", "6", "8"],
+                    answer: "6",
+                    explanation: "9/10 ÷ 3/20 = 9/10 × 20/3 = 180/30 = 6。"
+                },
+                {
+                    unit: "第4單元",
+                    question: "汽車油箱裡有 45.6 公升的汽油，每開 1 公里消耗 0.08 公升汽油，總共可以開多少公里？",
+                    options: ["5.7 公里", "57 公里", "570 公里", "5700 公里"],
+                    answer: "570 公里",
+                    explanation: "45.6 ÷ 0.08 = 4560 ÷ 8 = 570 公里。"
+                }
+            ]
+        }
+    };
+
+    let playerName = "";
+    let currentSubjectKey = "";
+    let currentBank = null;
+    let startTime = 0;
+    let timerInterval = null;
+    let elapsedTimeSeconds = 0;
+
+    window.onload = function() {
+        renderLeaderboard("home-leaderboard-body");
+    };
+
+    function startExam(subjectKey) {
+        const inputName = document.getElementById("player-name").value.trim();
+        if (!inputName) {
+            alert("請先輸入學生姓名！");
+            return;
+        }
+        playerName = inputName;
+        currentSubjectKey = subjectKey;
+        currentBank = questionBanks[subjectKey];
+
+        document.getElementById("home-screen").classList.add("hidden");
+        document.getElementById("exam-screen").classList.remove("hidden");
+        document.getElementById("exam-student-tag").innerText = `考生：${playerName} (${currentBank.title})`;
+
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+
+        loadExamPaper();
+    }
+
+    function updateTimer() {
+        const now = Date.now();
+        elapsedTimeSeconds = Math.floor((now - startTime) / 1000);
+        const minutes = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, '0');
+        const seconds = String(elapsedTimeSeconds % 60).padStart(2, '0');
+        document.getElementById("exam-timer-indicator").innerText = `⏱️ 考試時間：${minutes}:${seconds}`;
+    }
+
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function loadExamPaper() {
+        const paperArea = document.getElementById("exam-paper-area");
+        paperArea.innerHTML = `
+            <div class="exam-title">${currentBank.title}</div>
+            <div class="exam-subtitle">中正國小六年級專屬測驗卷（含 iPad 觸控筆手寫草稿區）</div>
+        `;
+
+        currentBank.questions.forEach((q, idx) => {
+            const randomizedOpts = shuffleArray(q.options);
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "exam-question-item";
+            itemDiv.innerHTML = `
+                <div class="exam-question-title">第 ${idx + 1} 題 [${q.unit}]：${q.question}</div>
+                <div class="exam-options" id="exam-opts-${idx}">
+                    ${randomizedOpts.map(opt => `
+                        <label><input type="radio" name="question_${idx}" value="${opt}"> ${opt}</label>
+                    `).join('')}
+                </div>
+                
+                <!-- iPad 觸控筆計算草稿區 -->
+                <div class="scratchpad-box">
+                    <div class="scratchpad-header">
+                        <span>✏️ 觸控筆計算/筆記畫布</span>
+                        <div class="canvas-tools">
+                            <button class="tool-btn active" onclick="setPenColor(this, ${idx}, '#000000')">黑筆</button>
+                            <button class="tool-btn" onclick="setPenColor(this, ${idx}, '#e74c3c')">紅筆</button>
+                            <button class="tool-btn" onclick="setPenColor(this, ${idx}, '#3498db')">藍筆</button>
+                            <button class="tool-btn" onclick="setEraser(this, ${idx})">橡皮擦</button>
+                            <button class="tool-btn" onclick="clearCanvas(${idx})">清除全部</button>
+                        </div>
+                    </div>
+                    <canvas class="scratchpad-canvas" id="pad-${idx}"></canvas>
+                </div>
+
+                <div class="exam-feedback" id="exam-feedback-${idx}"></div>
+            `;
+            paperArea.appendChild(itemDiv);
+            
+            // 初始化畫布事件
+            setTimeout(() => initCanvas(idx), 50);
+        });
+    }
+
+    // --- 觸控筆畫布控制邏輯 ---
+    const canvasStates = {};
+
+    function initCanvas(idx) {
+        const canvas = document.getElementById(`pad-${idx}`);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        // 設定實際解析度
+        canvas.width = canvas.parentElement.clientWidth - 16;
+        canvas.height = 130;
+
+        canvasStates[idx] = {
+            isDrawing: false,
+            color: '#000000',
+            isEraser: false,
+            lineWidth: 2.5,
+            ctx: ctx
+        };
+
+        // 綁定滑鼠與觸控筆事件
+        canvas.addEventListener('pointerdown', startDraw);
+        canvas.addEventListener('pointermove', draw);
+        canvas.addEventListener('pointerup', stopDraw);
+        canvas.addEventListener('pointerleave', stopDraw);
+    }
+
+    function getPos(e, canvas) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    function startDraw(e) {
+        const idx = this.id.split('-')[1];
+        const state = canvasStates[idx];
+        state.isDrawing = true;
+        const pos = getPos(e, this);
+        state.ctx.beginPath();
+        state.ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+        const idx = this.id.split('-')[1];
+        const state = canvasStates[idx];
+        if (!state.isDrawing) return;
+
+        const pos = getPos(e, this);
+        state.ctx.lineWidth = state.isEraser ? 16 : state.lineWidth;
+        state.ctx.lineCap = 'round';
+        state.ctx.lineJoin = 'round';
+
+        if (state.isEraser) {
+            state.ctx.globalCompositeOperation = 'destination-out';
+        } else {
+            state.ctx.globalCompositeOperation = 'source-over';
+            state.ctx.strokeStyle = state.color;
+        }
+
+        state.ctx.lineTo(pos.x, pos.y);
+        state.ctx.stroke();
+    }
+
+    function stopDraw() {
+        const idx = this.id.split('-')[1];
+        if (canvasStates[idx]) {
+            canvasStates[idx].isDrawing = false;
+        }
+    }
+
+    function setPenColor(btn, idx, color) {
+        canvasStates[idx].color = color;
+        canvasStates[idx].isEraser = false;
+        const tools = btn.parentElement.querySelectorAll('.tool-btn');
+        tools.forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function setEraser(btn, idx) {
+        canvasStates[idx].isEraser = true;
+        const tools = btn.parentElement.querySelectorAll('.tool-btn');
+        tools.forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function clearCanvas(idx) {
+        const canvas = document.getElementById(`pad-${idx}`);
+        const state = canvasStates[idx];
+        state.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+        let correctCount = 0;
+        const totalQ = currentBank.questions.length;
+        const pointsPerQ = Math.round(100 / totalQ);
+
+        currentBank.questions.forEach((q, idx) => {
+            const selectedOpt = document.querySelector(`input[name="question_${idx}"]:checked`);
+            const feedbackDiv = document.getElementById(`exam-feedback-${idx}`);
+            feedbackDiv.style.display = "block";
+
+            document.querySelectorAll(`input[name="question_${idx}"]`).forEach(inp => inp.disabled = true);
+
+            if (selectedOpt && selectedOpt.value === q.answer) {
+                correctCount += pointsPerQ;
+                feedbackDiv.className = "exam-feedback exam-correct";
+                feedbackDiv.innerHTML = `✅ 答對了！詳解：${q.explanation}`;
+            } else {
+                feedbackDiv.className = "exam-feedback exam-incorrect";
+                feedbackDiv.innerHTML = `❌ 答錯或未作答。正確答案是：<strong>${q.answer}</strong>。詳解：${q.explanation}`;
+            }
+        });
+
+        document.getElementById("exam-submit-container").style.display = "none";
+        
+        setTimeout(() => {
+            endGame(correctCount);
+        }, 1500);
+    }
+
+    function endGame(finalScore) {
+        document.getElementById("exam-screen").classList.add("hidden");
+        document.getElementById("result-screen").classList.remove("hidden");
+
+        const minutes = String(Math.floor(elapsedTimeSeconds / 60)).padStart(2, '0');
+        const seconds = String(elapsedTimeSeconds % 60).padStart(2, '0');
+        const timeStr = `${minutes}:${seconds}`;
+        const dateStr = new Date().toISOString().slice(0, 10);
+
+        let records = JSON.parse(localStorage.getItem("ipad_exam_records") || "[]");
+        records.push({
+            subject: currentBank.title.split("（")[0],
+            name: playerName,
+            score: finalScore,
+            time: timeStr,
+            rawTime: elapsedTimeSeconds,
+            date: dateStr
+        });
+
+        records.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.rawTime - b.rawTime;
+        });
+
+        records = records.slice(0, 5);
+        localStorage.setItem("ipad_exam_records", JSON.stringify(records));
+
+        document.getElementById("final-summary").innerHTML = `
+            <strong>考生 ${playerName} (${currentBank.title.split("（")[0]})：</strong><br>
+            測驗已完成！<br>
+            最終得分：<strong>${finalScore} 分</strong> | 總花費時間：<strong>${timeStr}</strong>
+        `;
+
+        renderLeaderboard("final-leaderboard-body");
+    }
+
+    function renderLeaderboard(tbodyId) {
+        const tbody = document.getElementById(tbodyId);
+        const records = JSON.parse(localStorage.getItem("ipad_exam_records") || "[]");
+        
+        if (records.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5">目前尚無記錄</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = "";
+        records.forEach(rec => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${rec.subject}</td>
+                <td>${rec.name}</td>
+                <td>${rec.score} 分</td>
+                <td>${rec.time}</td>
+                <td>${rec.date}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+</html>
