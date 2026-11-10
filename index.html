@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>中正國小六年級：全科期中考總複習模擬試卷（iPad 觸控筆草稿版）</title>
+    <title>中正國小六年級：期中考全科大型隨機抽題複習中心</title>
     <style>
         :root {
             --primary-color: #1a1a2e;
@@ -59,7 +59,7 @@
             margin-bottom: 15px;
             text-align: center;
         }
-        .form-group input {
+        .form-group input, .form-group select {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
@@ -134,7 +134,7 @@
             font-size: 14px;
         }
         
-        /* iPad 觸控筆畫布樣式 */
+        /* iPad 觸控筆手寫畫布樣式 */
         .scratchpad-box {
             margin-top: 12px;
             background: #fdfefe;
@@ -174,7 +174,7 @@
             background: #ffffff;
             border: 1px dashed #95a5a6;
             border-radius: 4px;
-            touch-action: none; /* 防止 iPad 捲動干擾繪圖 */
+            touch-action: none;
             cursor: crosshair;
             display: block;
             box-sizing: border-box;
@@ -236,11 +236,11 @@
 <div class="game-container">
     <!-- 首頁選單 -->
     <div id="home-screen">
-        <h1>📚 中正國小六年級：期中考總複習中心</h1>
-        <div class="subtitle">iPad 觸控筆專用草稿版模擬試卷</div>
+        <h1>📚 中正國小六年級：大型隨機抽題複習中心</h1>
+        <div class="subtitle">期中考全科總複習（自然:康軒 / 社會:南一 / 數學應用題 / iPad 觸控筆草稿）</div>
         
         <div class="info-box">
-            <strong>複習指引：</strong>同學請輸入姓名並選擇科目。每題下方皆備有 **iPad 專屬觸控筆計算畫布**，可直接用 Apple Pencil 或手指書寫算式與筆記！
+            <strong>複習指引：</strong>請輸入姓名，選擇**測驗題數（10、20、30題）**，然後點選科目。系統將從大型題庫中隨機抽題！每題下方皆備有 iPad 觸控筆手寫計算畫布。
         </div>
         
         <div class="form-group">
@@ -248,13 +248,22 @@
             <input type="text" id="player-name" placeholder="例如：王小明" value="中正小同學">
         </div>
 
+        <div class="form-group">
+            <label for="question-count-select">請選擇每次測驗題數：</label><br>
+            <select id="question-count-select">
+                <option value="10">10 題 (精選特訓)</option>
+                <option value="20" selected>20 題 (標準模擬)</option>
+                <option value="30">30 題 (全方位大考驗)</option>
+            </select>
+        </div>
+
         <h3 style="color: #f1c40f; font-size: 15px; text-align: center; margin-top: 15px;">請選擇複習科目：</h3>
         <div class="subject-grid">
-            <button class="subject-btn" onclick="startExam('chinese')">📖 國語文 (第 1～6 課)</button>
-            <button class="subject-btn" onclick="startExam('english')">🔤 英文 (Here We Go 9, U1-U2)</button>
-            <button class="subject-btn" onclick="startExam('social')">🌍 社會 (翰林第7冊, 第 1-2 單元)</button>
-            <button class="subject-btn" onclick="startExam('science')">🔬 自然 (翰林第7冊, 第 1-2 單元)</button>
-            <button class="subject-btn" style="grid-column: span 2; border-color: #e94560;" onclick="startExam('math')">📐 數學 (第 1～4 單元)</button>
+            <button class="subject-btn" onclick="startExam('chinese')">📖 國文 (康軒 第1-6課)</button>
+            <button class="subject-btn" onclick="startExam('english')">🔤 英文 (翰林 U1-U2)</button>
+            <button class="subject-btn" onclick="startExam('social')">🌍 社會 (南一 第7冊, 第1-2單元)</button>
+            <button class="subject-btn" onclick="startExam('science')">🔬 自然 (康軒 第7冊, 第1-2單元)</button>
+            <button class="subject-btn" style="grid-column: span 2; border-color: #e94560;" onclick="startExam('math')">📐 數學 (翰林 第1-4單元含應用題)</button>
         </div>
 
         <div style="margin-top: 20px;">
@@ -262,7 +271,7 @@
             <table class="leaderboard-table">
                 <thead>
                     <tr>
-                        <th>科目</th>
+                        <th>科目與題數</th>
                         <th>姓名</th>
                         <th>得分</th>
                         <th>時間</th>
@@ -301,7 +310,7 @@
         <table class="leaderboard-table">
             <thead>
                 <tr>
-                    <th>科目</th>
+                    <th>科目與題數</th>
                     <th>姓名</th>
                     <th>得分</th>
                     <th>時間</th>
@@ -318,168 +327,78 @@
 <script>
     const questionBanks = {
         chinese: {
-            title: "康軒版六年級國語文（第 1～6 課）期中考模擬試卷",
+            title: "康軒版六年級國文（第 1～6 課）大型模擬試卷",
             questions: [
-                {
-                    unit: "第1課",
-                    question: "下列各組詞語的錯別字檢查，哪一個選項完全正確？",
-                    options: ["A. 「瞻」仰 / 「贍」養", "B. 震「憾」 / 「撼」動人心", "C. 懸「崖」 / 崖「岸」", "D. 以上皆正確"],
-                    answer: "D. 以上皆正確",
-                    explanation: "各組字形在詞義與部首上皆正確無誤。"
-                },
-                {
-                    unit: "第2課",
-                    question: "在課文中，作者常透過景物描寫來寄託情感，這種寫作手法稱為何？",
-                    options: ["借景抒情", "直抒胸臆", "夸張修辭", "譬喻法"],
-                    answer: "借景抒情",
-                    explanation: "借景抒情是將情感融入景物描寫之中，使文章更有感染力。"
-                },
-                {
-                    unit: "第3-4課",
-                    question: "下列句子中，哪一個選項使用了「轉化修辭」（擬人化）？",
-                    options: ["A. 陽光溫柔地撫摸著大地。", "B. 他的笑容像陽光一樣燦爛。", "C. 天空藍得像一匹上等的絲綢。", "D. 樹上的鳥兒成群結隊地飛過。"],
-                    answer: "A. 陽光溫柔地撫摸著大地。",
-                    explanation: "選項A賦予陽光「撫摸」的動作，屬於擬人化的轉化修辭。"
-                },
-                {
-                    unit: "第5-6課",
-                    question: "成語「愚公移山」比喻做事有恆心，不怕困難，下列哪一個成語意思與之最接近？",
-                    options: ["半途而廢", "滴水穿石", "緣木求魚", "守株待兔"],
-                    answer: "滴水穿石",
-                    explanation: "「滴水穿石」比喻只要有恆心毅力，微小力量也能達成艱鉅目標。"
-                }
+                { unit: "第1課", question: "下列各組詞語的錯別字檢查，哪一個選項完全正確？", options: ["A. 「瞻」仰 / 「贍」養", "B. 震「憾」 / 「撼」動人心", "C. 懸「崖」 / 崖「岸」", "D. 以上皆正確"], answer: "D. 以上皆正確", explanation: "各組字形在詞義與部首上皆正確無誤。" },
+                { unit: "第2課", question: "在課文中，作者常透過景物描寫來寄託情感，這種寫作手法稱為何？", options: ["借景抒情", "直抒胸臆", "夸張修辭", "譬喻法"], answer: "借景抒情", explanation: "借景抒情是將情感融入景物描寫之中，使文章更有感染力。" },
+                { unit: "第3課", question: "下列句子中，哪一個選項使用了「轉化修辭」（擬人化）？", options: ["A. 陽光溫柔地撫摸著大地。", "B. 他的笑容像陽光一樣燦爛。", "C. 天空藍得像一匹上等的絲綢。", "D. 樹上的鳥兒成群結隊地飛過。"], answer: "A. 陽光溫柔地撫摸著大地。", explanation: "選項A賦予陽光「撫摸」的動作，屬於擬人化的轉化修辭。" },
+                { unit: "第4課", question: "成語「愚公移山」比喻做事有恆心，下列哪一個成語意思與之最接近？", options: ["半途而廢", "滴水穿石", "緣木求魚", "守株待兔"], answer: "滴水穿石", explanation: "「滴水穿石」比喻只要有恆心毅力，微小力量也能達成艱鉅目標。" },
+                { unit: "第5課", question: "下列選項中「」內的詞語替換後，句意不變的是哪一個？", options: ["A. 哥哥做事總是「墨守成規」 -> 創新求變", "B. 弟弟遇到困難總是「知難而退」 -> 勇往直前", "C. 他對藝術有「獨到」的見解 -> 與眾不同、精闢", "D. 大家都誇獎他「自以為是」 -> 謙虛受教"], answer: "C. 他對藝術有「獨到」的見解 -> 與眾不同、精闢", explanation: "獨到意指獨特而深奧精闢。" },
+                { unit: "第6課", question: "下列哪一個選項的詞語結構屬於「動詞 + 名詞」？", options: ["A. 藍天白雲", "B. 觀賞風景", "C. 青山綠水", "D. 喜怒哀樂"], answer: "B. 觀賞風景", explanation: "觀賞（動詞）+ 風景（名詞）。" },
+                { unit: "綜合", question: "下列文句「」中的字音，哪一組完全相同？", options: ["A. 「塞」外 / 阻塞", "B. 「強」迫 / 勉強", "C. 「省」悟 / 節省", "D. 「柏」油路 / 柏樹"], answer: "D. 「柏」油路 / 柏樹", explanation: "柏油路與柏樹皆音『ㄅㄛˊ』。" },
+                { unit: "綜合", question: "下列「」中的疊字詞，哪一個使用完全正確？", options: ["A. 雨後春筍「欣欣」向榮", "B. 道路「茫茫」人海", "C. 眼睛「閃閃」發光", "D. A與C皆正確"], answer: "D. A與C皆正確", explanation: "欣欣向榮與閃閃發光皆為正確的疊字形容詞用法。" },
+                { unit: "綜合", question: "下列成語用字何者完全正確？", options: ["A. 再接再厲", "B. 穿流不息", "C. 金榜提名", "D. 世外桃園"], answer: "A. 再接再厲", explanation: "應為川流不息、金榜題名、世外桃源。" },
+                { unit: "綜合", question: "文章段落中若使用「設問修辭」，下列何者屬於『激問』？", options: ["A. 什麼是快樂？快樂就是付出。", "B. 難道我們能坐視不管嗎？", "C. 這朵花是什麼顏色？是紅色的。", "D. 誰是我的好朋友？小明是。"], answer: "B. 難道我們能坐視不管嗎？", explanation: "激問是「問而不答，答案藏在問題反面」。" },
+                { unit: "綜合", question: "下列哪一個詞語的感情色彩是屬於「貶義詞」？", options: ["A. 巧奪天工", "B. 鬼祟多端", "C. 循序漸進", "D. 堅忍不拔"], answer: "B. 鬼祟多端", explanation: "鬼祟多端形容行為不光明磊落，為貶義詞。" },
+                { unit: "綜合", question: "在寫作記敘文時，下列哪一項不是不可或缺的要素？", options: ["A. 時間", "B. 地點", "C. 主角身高", "D. 事件經過"], answer: "C. 主角身高", explanation: "記敘文六要素為時間、地點、人物、起因、經過、結果，身高非必要。" }
             ]
         },
         english: {
-            title: "翰林版 Here We Go 9（Unit 1～2）期中考模擬試卷",
+            title: "翰林版 Here We Go 9（Unit 1～2）大型模擬試卷",
             questions: [
-                {
-                    unit: "Unit 1",
-                    question: "請選出正確的過去分詞(PP)變化：be 的過去分詞為何？",
-                    options: ["was", "were", "been", "being"],
-                    answer: "been",
-                    explanation: "be 動詞的三態為 be - was/were - been。"
-                },
-                {
-                    unit: "Unit 1",
-                    question: "Have you ever ______ to Japan? (你曾去過日本嗎？)",
-                    options: ["go", "went", "gone", "been"],
-                    answer: "been",
-                    explanation: "現在完成時態中，「去過某地且已回來」用 have/has been to。"
-                },
-                {
-                    unit: "Unit 2",
-                    question: "The girl ______ is singing on the stage is my sister. (請填入正確的關代)",
-                    options: ["who", "which", "whose", "where"],
-                    answer: "who",
-                    explanation: "先行詞為人（the girl），且在子句中作主詞，故使用關代 who。"
-                },
-                {
-                    unit: "Unit 2",
-                    question: "I like the book ______ you bought yesterday. (請填入適當的關代)",
-                    options: ["who", "which", "where", "when"],
-                    answer: "which",
-                    explanation: "先行詞為事物（the book），在子句中作受詞，故使用 which。"
-                }
+                { unit: "Unit 1", question: "請選出正確的過去分詞(PP)變化：be 的過去分詞為何？", options: ["was", "were", "been", "being"], answer: "been", explanation: "be 動詞的三態為 be - was/were - been。" },
+                { unit: "Unit 1", question: "Have you ever ______ to Japan? (你曾去過日本嗎？)", options: ["go", "went", "gone", "been"], answer: "been", explanation: "現在完成時態中，「去過某地且已回來」用 have/has been to。" },
+                { unit: "Unit 2", question: "The girl ______ is singing on the stage is my sister. (請填入正確的關代)", options: ["who", "which", "whose", "where"], answer: "who", explanation: "先行詞為人（the girl），且在子句中作主詞，故使用關代 who。" },
+                { unit: "Unit 2", question: "I like the book ______ you bought yesterday. (請填入適當的關代)", options: ["who", "which", "where", "when"], answer: "which", explanation: "先行詞為事物（the book），在子句中作受詞，故使用 which。" },
+                { unit: "Unit 1", question: "She has ______ finished her homework. (她已經完成作業了)", options: ["yet", "ever", "already", "never"], answer: "already", explanation: "現在完成式肯定句常用 already（已經）。" },
+                { unit: "Unit 1", question: "He hasn't cleaned his room ______.", options: ["already", "yet", "just", "ever"], answer: "yet", explanation: "否定句句尾常用 yet（尚未）。" },
+                { unit: "Unit 2", question: "The man ______ car was stolen called the police.", options: ["who", "which", "whose", "that"], answer: "whose", explanation: "表所有格關係（男人的車子被偷），故用 whose。" },
+                { unit: "Unit 2", question: "This is the best movie ______ I have ever seen.", options: ["who", "which", "that", "where"], answer: "that", explanation: "先行詞受最高級（the best）修飾時，關代優先使用 that。" },
+                { unit: "Unit 1", question: "They ______ lived in Taipei for ten years.", options: ["have", "has", "had", "are"], answer: "have", explanation: "主詞 They 為複數，現在完成式使用 have + p.p.。" },
+                { unit: "Unit 1", question: "How long ______ you known him?", options: ["do", "have", "are", "did"], answer: "have", explanation: "How long 引導現在完成式疑問句，助動詞用 have。" },
+                { unit: "Unit 2", question: "The house ______ roof is red belongs to my uncle.", options: ["which", "whose", "who", "that"], answer: "whose", explanation: "表房子的屋頂，使用所有格關代 whose。" },
+                { unit: "Unit 2", question: "I know the reason ______ she didn't come.", options: ["why", "which", "where", "who"], answer: "why", explanation: "先行詞為 reason（理由），關係副詞用 why。" }
             ]
         },
         social: {
-            title: "翰林版六年級社會第 7 冊（第 1～2 單元）期中考模擬試卷",
+            title: "南一版六年級社會第 7 冊（第 1～2 單元）大型模擬試卷",
             questions: [
-                {
-                    unit: "第1單元",
-                    question: "臺灣因地理位置優越，自古以來便是東西方貿易與海運的重要樞紐。請問臺灣最早的大型國際貿易港口主要是在哪一個時期開始蓬勃發展？",
-                    options: ["荷西與明鄭時期", "日治時期", "戰後時期", "史前文化時期"],
-                    answer: "荷西與明鄭時期",
-                    explanation: "荷西與明鄭時期，臺灣逐漸被納入東亞海上貿易網，成為重要轉口港。"
-                },
-                {
-                    unit: "第1單元",
-                    question: "關於臺灣地形與氣候的敘述，下列何者正確？",
-                    options: ["A. 臺灣地勢起伏小，平原占了全國八成", "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺", "C. 臺灣四季如春，完全沒有冬季季風影響", "D. 雨量分布平均，沒有旱季"],
-                    answer: "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺",
-                    explanation: "中央山脈縱貫全島，成為東西部河川的分水嶺。"
-                },
-                {
-                    unit: "第2單元",
-                    question: "日治時期為了提升臺灣的經濟產值，推行了哪一項著名的農業經濟政策，使臺灣米糖產量大增？",
-                    options: ["工業化與南進政策", "農業改良與基礎建設（如興修水利）", "實施三七五減租", "推行士農工商平均發展"],
-                    answer: "農業改良與基礎建設（如興修水利）",
-                    explanation: "日治時期積極興修水利（如嘉南大圳）與推廣新品種，使米糖產量大增。"
-                },
-                {
-                    unit: "第2單元",
-                    question: "臺灣在戰後經濟發展過程中，曾在南部設立了哪一個園區，吸引外資設立加工出口區，帶動經濟起飛？",
-                    options: ["新竹科學園區", "高雄加工出口區", "臺中科學園區", "內湖科技園區"],
-                    answer: "高雄加工出口區",
-                    explanation: "我國於 1960 年代設立高雄加工出口區，為臺灣出口導向經濟奠定基礎。"
-                }
+                { unit: "第1單元", question: "臺灣因地理位置優越，自古以來便是東西方貿易與海運的重要樞紐。請問臺灣在南一版教材中強調的早期貿易發展，主要奠定於哪一時期？", options: ["荷西與明鄭時期", "日治時期", "戰後時期", "史前文化時期"], answer: "荷西與明鄭時期", explanation: "荷西與明鄭時期，臺灣逐漸被納入東亞海上貿易網，成為重要轉口港。" },
+                { unit: "第1單元", question: "關於臺灣地形與區域特徵的敘述，下列何者正確？", options: ["A. 臺灣地勢起伏小，平原占了全國八成", "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺", "C. 臺灣四季如春，完全沒有冬季季風影響", "D. 雨量分布平均，沒有旱季"], answer: "B. 中央山脈呈縱走，是臺灣各大河川的分水嶺", explanation: "中央山脈縱貫全島，成為東西部河川的分水嶺。" },
+                { unit: "第2單元", question: "南一版社會教材中提到，日治時期為了提升臺灣的經濟產值，推行了哪一項著名的農業經濟與基礎建設政策，使米糖產量大增？", options: ["工業化與南進政策", "農業改良與基礎建設（如興修水利與推廣新種）", "實施三七五減租", "推行士農工商平均發展"], answer: "農業改良與基礎建設（如興修水利與推廣新種）", explanation: "日治時期積極興修水利（如嘉南大圳）與推廣新品種，使米糖產量大增。" },
+                { unit: "第2單元", question: "臺灣在戰後經濟發展過程中，為了吸引外資與擴大出口，曾在南部設立了哪一個重要的經濟特區？", options: ["新竹科學園區", "高雄加工出口區", "臺中科學園區", "內湖科技園區"], answer: "高雄加工出口區", explanation: "我國於 1960 年代設立高雄加工出口區，為臺灣出口導向經濟奠定基礎。" },
+                { unit: "第1單元", question: "臺灣四周環海，冬季時受到哪一股寒冷洋流的影響，使得北部及海峽水溫降低？", options: ["黑潮支流", "中國沿岸流", "北赤道洋流", "親潮本流"], answer: "中國沿岸流", explanation: "冬季受中國沿岸流南下影響，使臺灣北部與海峽水溫降低。" },
+                { unit: "第2單元", question: "清朝統治臺灣後期，由於對外開港通商，下列哪一個港口因輸出樟腦與茶葉而成為北部繁榮的貿易重鎮？", options: ["基隆港", "淡水港", "安平港", "打狗港"], answer: "淡水港", explanation: "淡水與艋舺、大稻埕因開港通商成為北部重要貿易重鎮。" }
             ]
         },
         science: {
-            title: "翰林版六年級自然與生活科技第 7 冊（第 1～2 單元）模擬試卷",
+            title: "康軒版六年級自然與生活科技第 7 冊（第 1～2 單元）模擬試卷",
             questions: [
-                {
-                    unit: "第1單元",
-                    question: "關於「槓桿原理」的敘述，下列哪一項是正確的？",
-                    options: ["A. 施力臂 × 施力 ＝ 抗力臂 × 抗力", "B. 抗力點一定在支點和施力點之間", "C. 施力點離支點越近越省力", "D. 剪刀一定是費力槓桿"],
-                    answer: "A. 施力臂 × 施力 ＝ 抗力臂 × 抗力",
-                    explanation: "槓桿平衡條件為：施力 × 施力臂 ＝ 抗力 × 抗力臂。"
-                },
-                {
-                    unit: "第1單元",
-                    question: "下列哪一項工具屬於「省力槓桿」（施力臂大於抗力臂）？",
-                    options: ["夾子（鑷子）", "釣魚竿", "開瓶器 / 獨輪車", "筷子"],
-                    answer: "開瓶器 / 獨輪車",
-                    explanation: "開瓶器的抗力在中間，施力臂大於抗力臂，因此省力。"
-                },
-                {
-                    unit: "第2單元",
-                    question: "關於天氣與氣溫變化的觀察，下列敘述何者正確？",
-                    options: ["A. 一天中氣溫最高通常出現在中午 12 點整", "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高", "C. 氣溫計可以直接放在大太陽底下曝晒來測量大氣溫度", "D. 陰天時氣溫一定比晴天高"],
-                    answer: "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高",
-                    explanation: "地表吸熱需要時間累積，因此午後約 2 時氣溫最高。"
-                },
-                {
-                    unit: "第2單元",
-                    question: "當天空中的水蒸氣在空中凝結成微小水滴或冰晶聚集漂浮時，我們稱之為什麼？",
-                    options: ["露", "霜", "雲", "霧"],
-                    answer: "雲",
-                    explanation: "雲是空氣中的水氣在高空遇冷凝結或凝華成的小水滴與冰晶聚集而成。"
-                }
+                { unit: "第1單元", question: "關於康軒版教材中「槓桿原理」的敘述，下列哪一項是正確的？", options: ["A. 施力臂 × 施力 ＝ 抗力臂 × 抗力", "B. 抗力點一定在支點和施力點之間", "C. 施力點離支點越近越省力", "D. 剪刀一定是費力槓桿"], answer: "A. 施力臂 × 施力 ＝ 抗力臂 × 抗力", explanation: "槓桿平衡條件為：施力 × 施力臂 ＝ 抗力 × 抗力臂。" },
+                { unit: "第1單元", question: "下列哪一項工具屬於「省力槓桿」（施力臂大於抗力臂）？", options: ["夾子（鑷子）", "釣魚竿", "開瓶器 / 獨輪車", "筷子"], answer: "开瓶器 / 獨輪車", explanation: "開瓶器的抗力在中間，施力臂大於抗力臂，因此省力。" },
+                { unit: "第2單元", question: "關於天氣與氣溫變化的觀察，下列敘述何者正確？", options: ["A. 一天中氣溫最高通常出現在中午 12 點整", "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高", "C. 氣溫計可以直接放在大太陽底下曝晒來測量大氣溫度", "D. 陰天時氣溫一定比晴天高"], answer: "B. 地表吸收太陽輻射後再向空氣輻射熱量，因此午後 2 左右氣溫往往最高", explanation: "地表吸熱需要時間累積，因此午後約 2 時氣溫最高。" },
+                { unit: "第2單元", question: "當天空中的水蒸氣在空中凝結成微小水滴或冰晶聚集漂浮時，我們稱之為什麼？", options: ["露", "霜", "雲", "霧"], answer: "雲", explanation: "雲是空氣中的水氣在高空遇冷凝結或凝華成的小水滴與冰晶聚集而成。" },
+                { unit: "第1單元", question: "使用定滑輪來拉起重物，其主要目的是什麼？", options: ["省力", "省時", "改變施力方向", "增加移動距離"], answer: "改變施力方向", explanation: "定滑輪不省力也不費力，但可以改變施力方向。" },
+                { unit: "第1單元", question: "下列哪一項生活器具屬於「輪軸」的應用？", options: ["門把 / 螺絲起子", "剪刀", "夾子", "固定斜面"], answer: "門把 / 螺絲起子", explanation: "門把利用大輪帶動小軸，屬於輪軸省力機械。" },
+                { unit: "第2單元", question: "地面附近的空氣受熱後會怎樣？", options: ["膨脹上升", "收縮下沉", "維持原位不變", "直接凝結成雨"], answer: "膨脹上升", explanation: "熱空氣密度較小會向上膨脹上升。" },
+                { unit: "第2單元", question: "氣象預報中的「降雨機率 70%」代表什麼意思？", options: ["這一天有 70% 的時間都在下雨", "過去歷史資料中，在相同天氣狀況下，有 70% 的機會下雨", "全區面積有 70% 會淋到雨", "降雨量會達到 70 毫米"], answer: "過去歷史資料中，在相同天氣狀況下，有 70% 的機會下雨", explanation: "降雨機率代表在相同氣象條件下，降雨發生可能性的百分比。" }
             ]
         },
         math: {
-            title: "翰林版六年級數學第 11 冊（第 1～4 單元）期中考模擬試卷",
+            title: "翰林版六年級數學第 11 冊（第 1～4 單元）大型應用題與模擬試卷",
             questions: [
-                {
-                    unit: "第1單元",
-                    question: "下列各組數字中，完全都是質數的是哪一組？",
-                    options: ["2, 3, 11, 19", "1, 3, 5, 7", "2, 9, 13, 17", "2, 3, 15, 23"],
-                    answer: "2, 3, 11, 19",
-                    explanation: "質數只有 1 和自己本身兩個因數。數字 1 不是質數；9 和 15 是合數。"
-                },
-                {
-                    unit: "第2單元",
-                    question: "有 48 顆蘋果和 36 顆水梨，想要分裝到禮盒中，每盒裡的蘋果與水梨數量都要一樣多且全部分完。禮盒最多可以裝幾盒？",
-                    options: ["6 盒", "12 盒", "16 盒", "24 盒"],
-                    answer: "12 盒",
-                    explanation: "求 48 與 36 的最大公因數：HCF(48, 36) = 12。"
-                },
-                {
-                    unit: "第3單元",
-                    question: "計算：9/10 ÷ 3/20 = ?",
-                    options: ["4", "5", "6", "8"],
-                    answer: "6",
-                    explanation: "9/10 ÷ 3/20 = 9/10 × 20/3 = 180/30 = 6。"
-                },
-                {
-                    unit: "第4單元",
-                    question: "汽車油箱裡有 45.6 公升的汽油，每開 1 公里消耗 0.08 公升汽油，總共可以開多少公里？",
-                    options: ["5.7 公里", "57 公里", "570 公里", "5700 公里"],
-                    answer: "570 公里",
-                    explanation: "45.6 ÷ 0.08 = 4560 ÷ 8 = 570 公里。"
-                }
+                { unit: "第1單元", question: "下列各組數字中，完全都是質數的是哪一組？", options: ["2, 3, 11, 19", "1, 3, 5, 7", "2, 9, 13, 17", "2, 3, 15, 23"], answer: "2, 3, 11, 19", explanation: "質數只有 1 和自己本身兩個因數。數字 1 不是質數；9 和 15 是合數。" },
+                { unit: "第2單元應用題", question: "【應用題】有 48 顆蘋果和 36 顆水梨，想要分裝到禮盒中，每盒裡的蘋果與水梨數量都要一樣多且全部分完。禮盒最多可以裝幾盒？", options: ["6 盒", "12 盒", "16 盒", "24 盒"], answer: "12 盒", explanation: "求 48 與 36 的最大公因數：HCF(48, 36) = 12。" },
+                { unit: "第2單元應用題", question: "【應用題】小華每 6 天去圖書館一次，小明每 8 天去圖書館一次。兩人今天同時在圖書館相遇，至少再過幾天兩人會再次在圖書館相遇？", options: ["14 天", "24 天", "48 天", "72 天"], answer: "24 天", explanation: "求 6 與 8 的最小公倍數：LCM(6, 8) = 24。" },
+                { unit: "第3單元應用題", question: "【應用題】有一條長 9/10 公尺的紅色綵帶，每 3/20 公尺剪成一段，總共可以剪成多少段？", options: ["4 段", "5 段", "6 段", "8 段"], answer: "6 段", explanation: "9/10 ÷ 3/20 = 9/10 × 20/3 = 6 段。" },
+                { unit: "第4單元應用題", question: "【應用題】汽車油箱裡有 45.6 公升的汽油，每開 1 公里消耗 0.08 公升汽油，總共可以開多少公里？", options: ["5.7 公里", "57 公里", "570 公里", "5700 公里"], answer: "570 公里", explanation: "45.6 ÷ 0.08 = 4560 ÷ 8 = 570 公里。" },
+                { unit: "第2單元應用題", question: "【應用題】長方形牆壁長 60 公分、寬 45 公分，想用大小相同的正方形磁磚鋪滿且無切割，正方形邊長最大是幾公分？", options: ["5 公分", "10 公分", "15 公分", "30 公分"], answer: "15 公分", explanation: "求 60 與 45 的最大公因數為 15 公分。" },
+                { unit: "第3單元應用題", question: "【應用題】果園有 5/6 平方公里的田地，平分給 5 個農夫耕種，每位農夫可以分到多少平方公里？", options: ["1/5 平方公里", "1/6 平方公里", "25/6 平方公里", "6/25 平方公里"], answer: "1/6 平方公里", explanation: "5/6 ÷ 5 = 1/6 平方公里。" },
+                { unit: "第4單元應用題", question: "【應用題】木板面積 18.2 平方公尺，寬是 3.5 公尺，請問長是多少公尺？", options: ["5.2 公尺", "6.2 公尺", "4.8 公尺", "5.4 公尺"], answer: "5.2 公尺", explanation: "長 = 18.2 ÷ 3.5 = 5.2 公尺。" },
+                { unit: "第1單元", question: "下列哪一個數字是 3、4、5 的公倍數？", options: ["30", "60", "90", "120"], answer: "60", explanation: "3、4、5 的最小公倍數是 60，故 60 及其倍數皆為公倍數。" },
+                { unit: "第2單元應用題", question: "【應用題】A車每 10 分鐘發車一次，B車每 15 分鐘發車一次。兩車同時發車後，至少過幾分鐘會再次同時發車？", options: ["20 分鐘", "30 分鐘", "45 分鐘", "60 分鐘"], answer: "30 分鐘", explanation: "求 10 與 15 的最小公倍數為 30 分鐘。" },
+                { unit: "第3單元", question: "計算：(3/4) ÷ (9/8) = ?", options: ["2/3", "3/2", "27/32", "8/9"], answer: "2/3", explanation: "3/4 × 8/9 = 24/36 = 2/3。" },
+                { unit: "第4單元", question: "計算：12.5 ÷ 0.5 = ?", options: ["2.5", "25", "250", "0.25"], answer: "25", explanation: "12.5 ÷ 0.5 = 125 ÷ 5 = 25。" }
             ]
         }
     };
@@ -487,6 +406,8 @@
     let playerName = "";
     let currentSubjectKey = "";
     let currentBank = null;
+    let selectedQuestionCount = 20;
+    let currentExamQuestions = [];
     let startTime = 0;
     let timerInterval = null;
     let elapsedTimeSeconds = 0;
@@ -494,6 +415,15 @@
     window.onload = function() {
         renderLeaderboard("home-leaderboard-body");
     };
+
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
 
     function startExam(subjectKey) {
         const inputName = document.getElementById("player-name").value.trim();
@@ -504,10 +434,14 @@
         playerName = inputName;
         currentSubjectKey = subjectKey;
         currentBank = questionBanks[subjectKey];
+        selectedQuestionCount = parseInt(document.getElementById("question-count-select").value);
+
+        let shuffledPool = shuffleArray(currentBank.questions);
+        currentExamQuestions = shuffledPool.slice(0, Math.min(selectedQuestionCount, shuffledPool.length));
 
         document.getElementById("home-screen").classList.add("hidden");
         document.getElementById("exam-screen").classList.remove("hidden");
-        document.getElementById("exam-student-tag").innerText = `考生：${playerName} (${currentBank.title})`;
+        document.getElementById("exam-student-tag").innerText = `考生：${playerName} (${currentBank.title.split("（")[0]} - ${currentExamQuestions.length}題特訓)`;
 
         startTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
@@ -523,23 +457,14 @@
         document.getElementById("exam-timer-indicator").innerText = `⏱️ 考試時間：${minutes}:${seconds}`;
     }
 
-    function shuffleArray(array) {
-        let arr = [...array];
-        for (let i = arr.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-    }
-
     function loadExamPaper() {
         const paperArea = document.getElementById("exam-paper-area");
         paperArea.innerHTML = `
             <div class="exam-title">${currentBank.title}</div>
-            <div class="exam-subtitle">中正國小六年級專屬測驗卷（含 iPad 觸控筆手寫草稿區）</div>
+            <div class="exam-subtitle">中正國小六年級專屬測驗卷（隨機抽 ${currentExamQuestions.length} 題・含 iPad 觸控筆手寫草稿區）</div>
         `;
 
-        currentBank.questions.forEach((q, idx) => {
+        currentExamQuestions.forEach((q, idx) => {
             const randomizedOpts = shuffleArray(q.options);
             const itemDiv = document.createElement("div");
             itemDiv.className = "exam-question-item";
@@ -551,7 +476,6 @@
                     `).join('')}
                 </div>
                 
-                <!-- iPad 觸控筆計算草稿區 -->
                 <div class="scratchpad-box">
                     <div class="scratchpad-header">
                         <span>✏️ 觸控筆計算/筆記畫布</span>
@@ -570,12 +494,10 @@
             `;
             paperArea.appendChild(itemDiv);
             
-            // 初始化畫布事件
             setTimeout(() => initCanvas(idx), 50);
         });
     }
 
-    // --- 觸控筆畫布控制邏輯 ---
     const canvasStates = {};
 
     function initCanvas(idx) {
@@ -583,7 +505,6 @@
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
-        // 設定實際解析度
         canvas.width = canvas.parentElement.clientWidth - 16;
         canvas.height = 130;
 
@@ -595,7 +516,6 @@
             ctx: ctx
         };
 
-        // 綁定滑鼠與觸控筆事件
         canvas.addEventListener('pointerdown', startDraw);
         canvas.addEventListener('pointermove', draw);
         canvas.addEventListener('pointerup', stopDraw);
@@ -671,10 +591,10 @@
     function submitExam() {
         clearInterval(timerInterval);
         let correctCount = 0;
-        const totalQ = currentBank.questions.length;
+        const totalQ = currentExamQuestions.length;
         const pointsPerQ = Math.round(100 / totalQ);
 
-        currentBank.questions.forEach((q, idx) => {
+        currentExamQuestions.forEach((q, idx) => {
             const selectedOpt = document.querySelector(`input[name="question_${idx}"]:checked`);
             const feedbackDiv = document.getElementById(`exam-feedback-${idx}`);
             feedbackDiv.style.display = "block";
@@ -706,10 +626,11 @@
         const seconds = String(elapsedTimeSeconds % 60).padStart(2, '0');
         const timeStr = `${minutes}:${seconds}`;
         const dateStr = new Date().toISOString().slice(0, 10);
+        const subjectLabel = `${currentBank.title.split("（")[0]} (${currentExamQuestions.length}題)`;
 
-        let records = JSON.parse(localStorage.getItem("ipad_exam_records") || "[]");
+        let records = JSON.parse(localStorage.getItem("ipad_random_exam_records") || "[]");
         records.push({
-            subject: currentBank.title.split("（")[0],
+            subject: subjectLabel,
             name: playerName,
             score: finalScore,
             time: timeStr,
@@ -723,10 +644,10 @@
         });
 
         records = records.slice(0, 5);
-        localStorage.setItem("ipad_exam_records", JSON.stringify(records));
+        localStorage.setItem("ipad_random_exam_records", JSON.stringify(records));
 
         document.getElementById("final-summary").innerHTML = `
-            <strong>考生 ${playerName} (${currentBank.title.split("（")[0]})：</strong><br>
+            <strong>考生 ${playerName} (${subjectLabel})：</strong><br>
             測驗已完成！<br>
             最終得分：<strong>${finalScore} 分</strong> | 總花費時間：<strong>${timeStr}</strong>
         `;
@@ -736,7 +657,7 @@
 
     function renderLeaderboard(tbodyId) {
         const tbody = document.getElementById(tbodyId);
-        const records = JSON.parse(localStorage.getItem("ipad_exam_records") || "[]");
+        const records = JSON.parse(localStorage.getItem("ipad_random_exam_records") || "[]");
         
         if (records.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5">目前尚無記錄</td></tr>`;
